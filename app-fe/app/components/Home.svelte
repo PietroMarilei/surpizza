@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Form from "./Form.svelte";
   let message: string = "Ciao Sono la app della pizza ";
 </script>
 
@@ -12,6 +13,7 @@
       </formattedString>
     </label>
   </gridLayout>
+  <Form />
 </page>
 
 <style>
