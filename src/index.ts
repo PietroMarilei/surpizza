@@ -2,6 +2,8 @@ import express from "express";
 import multer from "multer";
 import { createWorker, Worker } from "tesseract.js";
 import sharp from "sharp";
+import ImageOptimizer from "../classes/ImageOptimizer";
+import MenuExtractor from "../classes/MenuExtractor";
 
 const app = express();
 const upload = multer();
@@ -19,12 +21,11 @@ app.post("/ocr", upload.single("image"), async (req, res) => {
       inputBuffer = await sharp(inputBuffer).toFormat("jpeg").toBuffer();
     }
 
+    await ImageOptimizer.optimize(inputBuffer);
+
     const worker: Worker = await createWorker("ita", 1, {
       logger: (m) => console.log(m),
     });
-
-    // await worker.loadLanguage("ita");
-    // await worker.initialize("ita");
 
     const {
       data: { text },
@@ -32,7 +33,10 @@ app.post("/ocr", upload.single("image"), async (req, res) => {
 
     await worker.terminate();
 
-    res.json({ text });
+    const extractor = new MenuExtractor();
+    const dishes = extractor.extractDishes(text);
+
+    res.json(dishes);
   } catch (error) {
     console.error(error);
     res
@@ -42,5 +46,5 @@ app.post("/ocr", upload.single("image"), async (req, res) => {
 });
 
 app.listen(3000, () => {
-  console.log("Server avviato sulla porta 3000");
+  console.log("SERVER READY FOR ACTION ON PORT: 3000");
 });
