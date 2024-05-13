@@ -1,26 +1,21 @@
 {
   "compilerOptions": {
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
     "strict": true,
-    "target": "ES2020",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "lib": ["dom", "ESNext"],
-    "sourceMap": true,
-    "noEmitHelpers": true,
-    "importHelpers": true,
-    "baseUrl": ".",
-    "paths": {
-      "~/*": ["app/*"],
-      "@/*": ["app/*"]
-    },
-    "typeRoots": ["types"],
-    "types": ["node"],
-    "allowSyntheticDefaultImports": true,
+    "jsx": "preserve",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
     "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "skipLibCheck": true
+    "lib": ["ESNext", "DOM"],
+    "skipLibCheck": true,
+    "noEmit": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
-  "include": ["app", "types"],
-  "exclude": ["node_modules", "platforms"]
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

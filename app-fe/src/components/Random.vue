@@ -1,0 +1,12 @@
+<template>
+    <ion-page>
+        <ion-header>
+            <ion-toolbar>
+                <ion-title>random</ion-title>
+            </ion-toolbar>
+        </ion-header>
+        <ion-content>
+            <p>lol</p>
+        </ion-content>
+    </ion-page>
+</template>

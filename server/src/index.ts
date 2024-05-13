@@ -4,11 +4,13 @@ import { createWorker, Worker } from "tesseract.js";
 import sharp from "sharp";
 import ImageOptimizer from "../classes/ImageOptimizer";
 import MenuExtractor from "../classes/MenuExtractor";
+var cors = require("cors");
 
 const app = express();
 const upload = multer();
+app.use(cors());
 
-app.post("/ocr", upload.single("image"), async (req, res) => {
+app.post("/pizza", upload.single("image"), async (req, res) => {
   try {
     let inputBuffer = req.file!.buffer;
 

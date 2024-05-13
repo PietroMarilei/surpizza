@@ -1,0 +1,8 @@
+{
+  "name": "app-fe",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite",
+  "id": "ff6e61a4"
+}
