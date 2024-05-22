@@ -23,7 +23,7 @@ app.post("/pizza", upload.single("image"), async (req, res) => {
       inputBuffer = await sharp(inputBuffer).toFormat("jpeg").toBuffer();
     }
 
-    await ImageOptimizer.optimize(inputBuffer);
+    const OptimizedImage = await ImageOptimizer.optimize(inputBuffer);
 
     const worker: Worker = await createWorker("ita", 1, {
       logger: (m) => console.log(m),
@@ -31,14 +31,19 @@ app.post("/pizza", upload.single("image"), async (req, res) => {
 
     const {
       data: { text },
-    } = await worker.recognize(inputBuffer);
+    } = await worker.recognize(OptimizedImage);
 
     await worker.terminate();
 
     const extractor = new MenuExtractor();
     const dishes = extractor.extractDishes(text);
+    // Converti l'immagine ottimizzata in base64
+    const optimizedImageBase64 = OptimizedImage.toString("base64");
 
-    res.json(dishes);
+    res.json({
+      dishes,
+      optimizedImage: `data:image/jpeg;base64,${optimizedImageBase64}`,
+    });
   } catch (error) {
     console.error(error);
     res

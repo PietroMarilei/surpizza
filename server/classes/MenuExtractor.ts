@@ -29,7 +29,8 @@ class MenuExtractor {
 
     return dishes;
   }
-
+  //TODO: rivedere questa parte forse quei caratteri erano intepretati come "a capo"?
+  //TODO: aggiungere uno skip per 4 Formaggi
   /**
    * Rimuove tutti i caratteri speciali tranne le lettere (anche accentate), i numeri, gli spazi e il simbolo dell'euro.
    * @param text Il testo da pulire.
