@@ -31,10 +31,14 @@
 import { ref } from 'vue';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import axios from 'axios';
+import { defineCustomElements } from '@ionic/pwa-elements/loader';
+
+defineCustomElements(window);
+
 
 const showModal = ref(false)
 const imageSrc = ref('');
-const responseJSON = ref([{ id: '00', name: 'test', price: 'molto' },]);
+const responseJSON = ref([]);
 
 
 const takePhoto = async () => {
@@ -52,6 +56,7 @@ const handleFileChange = async (event) => {
     const formData = new FormData();
     formData.append('image', file);
     try {
+        console.log("Sending...");
         const response = await axios.post('http://localhost:3000/pizza', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
