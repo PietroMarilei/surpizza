@@ -1,10 +1,11 @@
 import express from "express";
 import multer from "multer";
-import { createWorker, Worker } from "tesseract.js";
-import sharp from "sharp";
-import ImageOptimizer from "../classes/ImageOptimizer";
+import axios from "axios";
+import cors from "cors";
+import dotenv from "dotenv";
 import MenuExtractor from "../classes/MenuExtractor";
-var cors = require("cors");
+
+dotenv.config();
 
 const app = express();
 const upload = multer();
@@ -12,37 +13,36 @@ app.use(cors());
 
 app.post("/pizza", upload.single("image"), async (req, res) => {
   try {
-    let inputBuffer = req.file!.buffer;
+    // Assicurati che il buffer sia in formato JPEG
+    const imageBuffer = req.file!.buffer;
+    const imageBase64 = imageBuffer.toString("base64");
+    const imageData = `data:image/jpeg;base64,${imageBase64}`;
 
-    // Verifica se il file è in formato HEIC o AVIF
-    if (
-      req.file!.mimetype === "image/heic" ||
-      req.file!.mimetype === "image/avif"
-    ) {
-      // Converti HEIC o AVIF in JPG utilizzando sharp
-      inputBuffer = await sharp(inputBuffer).toFormat("jpeg").toBuffer();
+    // Invia la richiesta all'API OCR.space
+    const response = await axios.post(
+      "https://api.ocr.space/parse/image",
+      null, // Non c'è bisogno di un body qui
+      {
+        responseType: "json", // Assicurati di impostare il responseType su json
+        headers: {
+          apikey: process.env.OCR_SPACE_API_KEY!,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (response.data.IsErroredOnProcessing) {
+      throw new Error(response.data.ErrorMessage[0]);
     }
 
-    const OptimizedImage = await ImageOptimizer.optimize(inputBuffer);
-
-    const worker: Worker = await createWorker("ita", 1, {
-      logger: (m) => console.log(m),
-    });
-
-    const {
-      data: { text },
-    } = await worker.recognize(OptimizedImage);
-
-    await worker.terminate();
+    const text = response.data.ParsedResults[0].ParsedText;
 
     const extractor = new MenuExtractor();
     const dishes = extractor.extractDishes(text);
-    // Converti l'immagine ottimizzata in base64
-    const optimizedImageBase64 = OptimizedImage.toString("base64");
 
     res.json({
       dishes,
-      optimizedImage: `data:image/jpeg;base64,${optimizedImageBase64}`,
+      optimizedImage: imageData,
     });
   } catch (error) {
     console.error(error);
