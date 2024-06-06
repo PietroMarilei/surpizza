@@ -1,0 +1,5 @@
+{
+  "watch": ["src/main/java", "src/main/resources"],
+  "ext": "java,properties",
+  "exec": "mvn spring-boot:run"
+}
